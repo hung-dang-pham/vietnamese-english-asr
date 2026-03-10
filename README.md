@@ -198,4 +198,4 @@ If you use this work, please cite:
 
 ## 📬 Contact
 
-Questions or feedback? Open an issue or contact `[your email]`.
+Questions or feedback? Open an issue or contact `hungdangpham.ai@gmail.com`.
