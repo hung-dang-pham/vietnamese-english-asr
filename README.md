@@ -8,6 +8,30 @@
 
 ---
 
+## Dataset Description
+
+The dataset consists of 12,672 utterances totaling 12.2 hours of
+English-Vietnamese code-switching speech, partitioned into training (10,188 utterances,
+9.8 hours), development (1,048 utterances, 1.0 hours), and
+test (1,436 utterances, 1.5 hours) sets.
+
+Audio recordings have a mean duration of 3.5s (std=0.9s,
+range=0.1–9.2s) in the training set. Each utterance contains
+on average 10.4 tokens (std=2.4).
+
+A total of 12,647 utterances (99.8% of the corpus) exhibit
+intra-sentential code-switching, defined as the presence of both Vietnamese and English tokens
+within a single utterance. At the token level, English words account for 18.6%
+of all tokens in the training set. The vocabulary comprises 6,685 unique word types
+in total, of which 4,599 are English and 1,858 are Vietnamese.
+English code-switching terms are predominantly drawn from the daily life / social domain,
+reflecting natural bilingual communication patterns among Vietnamese speakers.
+
+All audio is recorded at 16 kHz, single channel. Transcripts are provided in their natural
+mixed-language form without normalization of code-switching tokens.
+
+---
+
 ## 📊 Results
 
 | Test Set | Source | Duration | WER (norm) | CER (norm) |
