@@ -117,13 +117,26 @@ vien-cs-asr/
 
 ## Setup
 
+Tested on Python 3.10, CUDA 12.1, single NVIDIA A100 80 GB.
+
 ```bash
 git clone https://github.com/[org]/vien-cs-asr.git
 cd vien-cs-asr
+```
+
+Install PyTorch with the correct CUDA variant first:
+
+```bash
+pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
+```
+
+Then install the remaining dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-Tested on Python 3.10, CUDA 12.1, single NVIDIA A100 80 GB.
+> **Note:** If you are running on a different CUDA version, replace `cu121` with the appropriate tag (e.g. `cu118` for CUDA 11.8). See [pytorch.org/get-started](https://pytorch.org/get-started/locally/) for the full matrix.
 
 ---
 
