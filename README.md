@@ -1,225 +1,194 @@
-# 🎙️ Vietnamese-English Code-Switching ASR
+# Vietnamese-English Code-Switching ASR
 
-> Fine-tuned Whisper large-v3 for Vietnamese-English code-switching automatic speech recognition.
-
-[![Paper](https://img.shields.io/badge/Paper-ArXiv-red)](https://arxiv.org/abs/XXXX.XXXXX)
-[![Model](https://img.shields.io/badge/Model-HuggingFace-yellow)](https://huggingface.co/yourname/whisper-vi-en-codeswitching)
-[![License](https://img.shields.io/badge/License-MIT-blue)](LICENSE)
+> **Paper:** "A Vietnamese-English Code-Switching Speech Dataset and Benchmark Evaluation for Automatic Speech Recognition"  
+> Submitted to *Procedia Computer Science* — KES 2026
 
 ---
 
-## Dataset Description
+## Overview
 
-The dataset consists of 12,672 utterances totaling 12.2 hours of
-English-Vietnamese code-switching speech, partitioned into training (10,188 utterances,
-9.8 hours), development (1,048 utterances, 1.0 hours), and
-test (1,436 utterances, 1.5 hours) sets.
+This repository contains the dataset, code, and model weights accompanying the paper. We present:
 
-Audio recordings have a mean duration of 3.5s (std=0.9s,
-range=0.1–9.2s) in the training set. Each utterance contains
-on average 10.4 tokens (std=2.4).
-
-A total of 12,647 utterances (99.8% of the corpus) exhibit
-intra-sentential code-switching, defined as the presence of both Vietnamese and English tokens
-within a single utterance. At the token level, English words account for 18.6%
-of all tokens in the training set. The vocabulary comprises 6,685 unique word types
-in total, of which 4,599 are English and 1,858 are Vietnamese.
-English code-switching terms are predominantly drawn from the daily life / social domain,
-reflecting natural bilingual communication patterns among Vietnamese speakers.
-
-All audio is recorded at 16 kHz, single channel. Transcripts are provided in their natural
-mixed-language form without normalization of code-switching tokens.
+- The **first labeled speech corpus** for Vietnamese-English code-switching (~12 hours, 12,672 utterances across 5 real-world domains)
+- A **benchmark evaluation** of 4 ASR systems: Whisper large-v3, PhoWhisper-large, wav2vec2-base-vietnamese-250h, and Qwen3-ASR-1.7B
+- An **ablation study** showing that LoRA fine-tuning + speed perturbation + SpecAugment reduces WER-N from 20.95% → 4.56% on the holdout set
 
 ---
 
-## 📊 Results
+## Results
 
-| Test Set | Source | Duration | WER (norm) | CER (norm) |
-|---|---|---|---|---|
-| Short utterances (2–3s) | Scripted | ~1h | **0.25%** | 0.17% |
-| Long utterances (8–20s) | YouTube | ~20min | **3.50%** | 1.51% |
+### Ablation study (validation set)
 
-Baseline (Whisper large-v3, no fine-tuning): `[X]%` WER on short, `[X]%` on long.
+| Model | Condition | WER | WER-N | CER-N | SER-N |
+|---|---|---|---|---|---|
+| Whisper large-v3 | Baseline | 21.01 | 13.62 | 7.37 | 61.16 |
+| Whisper large-v3 | + Aug | 5.86 | 5.15 | 2.67 | 34.45 |
+| Whisper large-v3 | + LoRA | 6.48 | 5.72 | 2.93 | 37.50 |
+| Whisper large-v3 | **+ Aug + LoRA** | **5.86** | **5.15** | **2.69** | **34.26** |
+| PhoWhisper-large | Baseline | 29.76 | 20.95 | 11.44 | 77.29 |
+| PhoWhisper-large | + Aug | 6.02 | 5.18 | 2.77 | 32.92 |
+| PhoWhisper-large | + LoRA | 6.35 | 5.53 | 2.87 | 35.21 |
+| PhoWhisper-large | **+ Aug + LoRA** ✓ | **6.00** | **5.12** | **2.71** | **33.11** |
+| wav2vec2-VI-250h | Baseline (zero-shot) | 64.68 | 51.30 | 28.10 | 100.00 |
+| Qwen3-ASR-1.7B | Baseline (zero-shot) | 23.83 | 14.43 | 7.74 | 62.88 |
+
+### Holdout evaluation — PhoWhisper-large + Aug + LoRA
+
+| Metric | Raw | Normalized |
+|---|---|---|
+| WER | 5.76 | **4.56** |
+| CER | 2.76 | 2.44 |
+| SER | 37.26 | 31.48 |
+
+### Cross-domain: VIVOS monolingual Vietnamese
+
+| Model | Condition | WER-N |
+|---|---|---|
+| wav2vec2-VI-250h | Untuned | 10.72 |
+| Qwen3-ASR-1.7B | Untuned | 7.17 |
+| Whisper large-v3 | Untuned | 12.26 |
+| PhoWhisper-large | Untuned | 4.61 |
+| PhoWhisper-large | Fine-tuned | 7.20 |
+
+Fine-tuning on code-switching data increases VIVOS WER-N by only 2.59pp — no catastrophic forgetting.
 
 ---
 
-## 🚀 Quick Start
+## Dataset
 
-### Installation
+The corpus comprises **12,672 utterances / 12.2 hours** spanning 5 domains: classrooms, supermarkets, airports, offices, and casual conversation.
+
+| Split | Utterances | Duration |
+|---|---|---|
+| Train | 10,188 | 9.8 h |
+| Dev | 1,048 | 1.0 h |
+| Test | 1,436 | 1.5 h |
+
+- 99.8% of utterances contain intra-sentential code-switching
+- English token ratio: 18.6% (train)
+- Vocabulary: 6,685 unique word types (4,599 EN / 1,858 VI)
+- Audio: 16 kHz, mono, `.wav`
+
+📦 **Dataset on HuggingFace Hub:** `[link coming soon]`
+
+---
+
+## Models
+
+📦 **Fine-tuned model weights on HuggingFace Hub:** `[link coming soon]`
+
+| Model | HuggingFace ID |
+|---|---|
+| PhoWhisper-large + Aug + LoRA (best) | `[coming soon]` |
+| Whisper large-v3 + Aug + LoRA | `[coming soon]` |
+
+---
+
+## Repository structure
+
+```
+vien-cs-asr/
+├── notebooks/
+│   ├── 01_eda.ipynb              # Dataset statistics & visualizations
+│   ├── 02_train.ipynb            # LoRA fine-tuning with augmentation
+│   ├── 03_eval.ipynb             # WER / CER / SER evaluation
+│   └── 04_error_analysis.ipynb   # Hallucination & number normalization analysis
+├── src/
+│   ├── dataset.py                # HuggingFace Dataset loader
+│   ├── augment.py                # Speed perturbation + SpecAugment
+│   └── metrics.py                # WER / CER / SER + text normalization
+├── configs/
+│   ├── train.yaml                # Training hyperparameters
+│   └── lora.yaml                 # LoRA configuration
+├── data/
+│   ├── raw/                      # Original audio (gitignored)
+│   ├── processed/                # 16 kHz normalized wav files (gitignored)
+│   └── manifests/                # train.json, dev.json, test.json
+├── models/
+│   ├── checkpoints/              # Training checkpoints (gitignored)
+│   └── lora_weights/             # LoRA adapter weights (gitignored)
+├── requirements.txt
+├── .gitignore
+├── DATASHEET.md
+└── LICENSE                       # CC BY 4.0
+```
+
+---
+
+## Setup
 
 ```bash
-git clone https://github.com/yourname/vietnamese-english-asr
-cd vietnamese-english-asr
+git clone https://github.com/[org]/vien-cs-asr.git
+cd vien-cs-asr
 pip install -r requirements.txt
 ```
 
-### Inference
+Tested on Python 3.10, CUDA 12.1, single NVIDIA A100 80 GB.
+
+---
+
+## Training
+
+Open `notebooks/02_train.ipynb` and set paths in the first cell:
 
 ```python
-from transformers import WhisperProcessor, WhisperForConditionalGeneration
-import numpy as np
-from pydub import AudioSegment
-
-# Load model
-processor = WhisperProcessor.from_pretrained("yourname/whisper-vi-en-codeswitching")
-model = WhisperForConditionalGeneration.from_pretrained("yourname/whisper-vi-en-codeswitching")
-
-# Load audio
-audio = AudioSegment.from_wav("your_audio.wav").set_frame_rate(16000).set_channels(1)
-audio_array = np.array(audio.get_array_of_samples()).astype(np.float32) / 32768.0
-
-# Transcribe
-inputs = processor(audio_array, sampling_rate=16000, return_tensors="pt")
-predicted_ids = model.generate(**inputs, language="vi", task="transcribe")
-transcript = processor.batch_decode(predicted_ids, skip_special_tokens=True)[0]
-print(transcript)
+DATA_DIR   = "data/manifests"
+OUTPUT_DIR = "models/checkpoints"
 ```
 
-Or use the inference script directly:
+Key hyperparameters (see `configs/train.yaml` and `configs/lora.yaml`):
+
+| Hyperparameter | Value |
+|---|---|
+| Optimizer | AdamW |
+| Learning rate | 5e-5 |
+| LR schedule | Cosine annealing (2 restarts) |
+| Effective batch size | 32 |
+| Label smoothing | 0.1 |
+| Gradient clipping | 1.0 |
+| Early stopping patience | 3 |
+| Max epochs | 5 |
+| LoRA rank *r* | 32 |
+| LoRA alpha *α* | 64 |
+| LoRA dropout | 0.1 |
+| LoRA target modules | q_proj, k_proj, v_proj, out_proj, fc1, fc2 |
+| Trainable params | 57.7M (3.6% of total) |
+
+---
+
+## Evaluation
 
 ```bash
-python src/inference.py --audio your_audio.wav
+# Run full evaluation on test split
+# (see notebooks/03_eval.ipynb for detailed breakdown)
 ```
+
+Metrics reported: WER, CER, SER on both raw and normalized transcriptions.  
+**Primary metric: WER-N** (punctuation removed, lowercased, language tags stripped).
 
 ---
 
-## 📁 Repository Structure
-
-```
-vietnamese-english-asr/
-├── README.md
-├── paper/
-│   └── paper.pdf                  # Full paper
-├── data/
-│   ├── README.md                  # Dataset description & download links
-│   └── sample/                    # Sample audio files for testing
-│       ├── sample_01.wav
-│       └── sample_transcript.json
-├── src/
-│   ├── inference.py               # Run inference on audio files
-│   ├── preprocess.py              # VAD trimming & audio chunking
-│   └── evaluate.py                # Compute WER/CER metrics
-├── notebooks/
-│   ├── 01_data_pipeline.ipynb     # Data collection from YouTube
-│   ├── 02_fine_tuning.ipynb       # Fine-tune Whisper + LoRA
-│   └── 03_evaluation.ipynb        # Reproduce paper results
-├── configs/
-│   └── train_config.yaml          # Training hyperparameters
-├── requirements.txt
-└── LICENSE
-```
-
----
-
-## 🗂️ Dataset
-
-Our dataset consists of two sources:
-
-- **Scripted speech**: Read by individual speakers, one sentence per utterance (2–3s)
-- **Spontaneous speech**: Extracted from YouTube educational and tech videos featuring natural Vietnamese-English code-switching (8–20s)
-
-Dataset is available at: [HuggingFace Datasets](https://huggingface.co/datasets/yourname/vi-en-codeswitching) *(coming soon)*
-
-### Sample
-
-```json
-{
-  "000001.wav": {
-    "text": "Hiện tại Dũng đang làm giảng viên trường Đại học Swinburne ở bên Úc, có dạy về trí tuệ nhân tạo, hệ thống thông minh, và Dũng có bằng tiến sĩ về xây dựng hệ thống AI."
-  },
-  "000002.wav": {
-    "text": "Thứ hai là AI Training, là những cái người đào tạo người khác cách sử dụng AI, có thể là đào tạo ở mức rất là cơ bản, cách sử dụng ChatGPT cho công việc hằng ngày."
-  }
-}
-```
-
----
-
-## 🔧 Training
-
-### Requirements
-
-- GPU: NVIDIA A100 40GB+ recommended for Whisper large-v3
-- CUDA 11.8+
-
-### Fine-tuning
-
-```bash
-# Install dependencies
-pip install -r requirements.txt
-
-# Run fine-tuning
-python src/train.py --config configs/train_config.yaml
-```
-
-Key hyperparameters (`configs/train_config.yaml`):
-
-```yaml
-model: openai/whisper-large-v3
-lora_rank: 8
-lora_target_modules: [q_proj, v_proj, out_proj, fc1, fc2]
-learning_rate: 1e-5
-warmup_steps: 100
-max_steps: 2000
-batch_size: 8
-gradient_accumulation_steps: 2
-```
-
-See `notebooks/02_fine_tuning.ipynb` for the full fine-tuning walkthrough.
-
----
-
-## 📈 Reproduce Results
-
-```bash
-# Download test set
-# (link coming soon)
-
-# Run evaluation
-python src/evaluate.py \
-  --model yourname/whisper-vi-en-codeswitching \
-  --test_data data/test_short.json \
-  --output results/test_short.csv
-
-python src/evaluate.py \
-  --model yourname/whisper-vi-en-codeswitching \
-  --test_data data/test_long.json \
-  --output results/test_long.csv
-```
-
-Or follow `notebooks/03_evaluation.ipynb` for the full evaluation walkthrough.
-
----
-
-## 🔍 Key Findings
-
-**1. Chunking quality matters**
-Sentence boundary accuracy significantly impacts WER. Utterances cut mid-sentence show substantially higher error rates than complete sentences. We recommend using VAD + forced alignment (WhisperX) for optimal segmentation.
-
-**2. Hallucination prevention**
-Whisper hallucinates when audio begins with music or non-speech noise. We apply Silero VAD to trim audio, retaining only 0.5s of silence before the first speech segment. This substantially reduces repetitive hallucination artifacts.
-
-**3. Utterance length domain mismatch**
-Training on short utterances (2–3s) leads to degraded performance on long utterances (8–20s). Balanced training data across utterance lengths is important for robust performance.
-
----
-
-## 📄 Citation
-
-If you use this work, please cite:
+## Citation
 
 ```bibtex
-@article{yourname2025vienasr,
-  title     = {Fine-tuning Whisper for Vietnamese-English Code-Switching Automatic Speech Recognition},
-  author    = {[Author Names]},
-  journal   = {[Venue]},
-  year      = {2025},
-  url       = {https://arxiv.org/abs/XXXX.XXXXX}
+@inproceedings{[author]2026viencsasr,
+  title     = {A Vietnamese-English Code-Switching Speech Dataset and Benchmark
+               Evaluation for Automatic Speech Recognition},
+  author    = {[Author] and [Author] and [Author]},
+  booktitle = {Procedia Computer Science (KES 2026)},
+  year      = {2026}
 }
 ```
 
 ---
 
-## 📬 Contact
+## License
 
-Questions or feedback? Open an issue or contact `hungdangpham.ai@gmail.com`.
+- **Code:** MIT License  
+- **Dataset:** Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+---
+
+## Acknowledgements
+
+[Acknowledgements here.]
