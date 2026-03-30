@@ -1,1 +1,7 @@
-
+# LoRA adapter weights are hosted on HuggingFace Hub — not tracked in git.
+# Download: [link coming soon]
+#
+# Files available on HF Hub:
+#   adapter_config.json
+#   adapter_model.safetensors
+#   preprocessor_config.json
