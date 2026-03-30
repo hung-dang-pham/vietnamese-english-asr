@@ -1,0 +1,44 @@
+# Model weights
+*.safetensors
+*.pt
+*.bin
+*.ckpt
+
+# Checkpoints
+models/checkpoints/
+output/
+
+# Audio data
+data/raw/
+data/processed/
+*.wav
+*.mp3
+*.flac
+
+# HuggingFace cache
+~/.cache/huggingface/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb~
+
+# Results / logs
+*.csv
+*.log
+wandb/
+runs/
+
+# OS
+.DS_Store
+Thumbs.db
