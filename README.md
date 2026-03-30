@@ -80,7 +80,6 @@ The corpus comprises **12,672 utterances / 12.2 hours** spanning 5 domains: clas
 | Model | HuggingFace ID |
 |---|---|
 | PhoWhisper-large + Aug + LoRA (best) | `rinhoooo/phowhisper-large-vien-cs-asr` |
-| Whisper large-v3 + Aug + LoRA | `[coming soon]` |
 
 ---
 
