@@ -1,0 +1,44 @@
+# Training hyperparameters
+# Seq2SeqTrainingArguments passed to HuggingFace Trainer
+
+# Data
+sampling_rate: 16000
+max_audio_len_sec: 30
+
+# Optimization
+learning_rate: 5.0e-5
+weight_decay: 0.01
+warmup_steps: 500
+num_train_epochs: 5
+per_device_train_batch_size: 16
+per_device_eval_batch_size: 8
+gradient_accumulation_steps: 2   # effective batch size = 16 * 2 = 32
+gradient_checkpointing: false
+
+# Precision
+fp16: false
+bf16: true                        # A100 supports bf16
+
+# Evaluation & checkpointing
+eval_strategy: "epoch"
+save_strategy: "epoch"
+load_best_model_at_end: true
+metric_for_best_model: "wer"
+greater_is_better: false
+early_stopping_patience: 3
+
+# Generation
+predict_with_generate: true
+generation_max_length: 225
+
+# Logging
+logging_steps: 25
+dataloader_num_workers: 4
+
+# Augmentation
+augmentation:
+  speed_rates: [0.9]              # rate 1.0 (original) always included
+  freq_mask_param: 27             # SpecAugment: mel bins per frequency mask
+  time_mask_param: 100            # SpecAugment: frames per time mask
+  n_freq_masks: 2
+  n_time_masks: 2
