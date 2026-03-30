@@ -75,11 +75,11 @@ The corpus comprises **12,672 utterances / 12.2 hours** spanning 5 domains: clas
 
 ## Models
 
-📦 **Fine-tuned model weights on HuggingFace Hub:** `[link coming soon]`
+📦 **Fine-tuned model weights on HuggingFace Hub:** [rinhoooo/phowhisper-large-vien-cs-asr](https://huggingface.co/rinhoooo/phowhisper-large-vien-cs-asr)
 
 | Model | HuggingFace ID |
 |---|---|
-| PhoWhisper-large + Aug + LoRA (best) | `[coming soon]` |
+| PhoWhisper-large + Aug + LoRA (best) | `rinhoooo/phowhisper-large-vien-cs-asr` |
 | Whisper large-v3 + Aug + LoRA | `[coming soon]` |
 
 ---
@@ -104,9 +104,6 @@ vien-cs-asr/
 │   ├── raw/                      # Original audio (gitignored)
 │   ├── processed/                # 16 kHz normalized wav files (gitignored)
 │   └── manifests/                # train.json, dev.json, test.json
-├── models/
-│   ├── checkpoints/              # Training checkpoints (gitignored)
-│   └── lora_weights/             # LoRA adapter weights (gitignored)
 ├── requirements.txt
 ├── .gitignore
 ├── DATASHEET.md
