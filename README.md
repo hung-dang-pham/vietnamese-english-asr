@@ -1,23 +1,23 @@
 # Vietnamese-English Code-Switching ASR
 
-> **Paper:** "A Vietnamese-English Code-Switching Speech Dataset and Benchmark Evaluation for Automatic Speech Recognition"  
-> Submitted to *Procedia Computer Science* — KES 2026
+Speech recognition for Vietnamese speakers who mix English words into their sentences. This repo contains a ~12-hour labeled code-switching speech dataset, a benchmark of four open ASR systems, and a LoRA fine-tuning recipe for PhoWhisper-large that cuts normalized WER from **20.95% to 4.56%** with no catastrophic forgetting on monolingual Vietnamese.
 
 ---
 
 ## Overview
 
-This repository contains the dataset, code, and model weights accompanying the paper. We present:
-
-- The **first labeled speech corpus** for Vietnamese-English code-switching (~12 hours, 12,672 utterances across 5 real-world domains)
-- A **benchmark evaluation** of 4 ASR systems: Whisper large-v3, PhoWhisper-large, wav2vec2-base-vietnamese-250h, and Qwen3-ASR-1.7B
-- An **ablation study** showing that LoRA fine-tuning + speed perturbation + SpecAugment reduces WER-N from 20.95% → 4.56% on the holdout set
+- **Dataset:** 12,672 utterances / 12.2 hours across 5 real-world domains (classrooms, supermarkets, airports, offices, casual conversation). 99.8% of utterances contain intra-sentential code-switching.
+- **Benchmark:** Whisper large-v3, PhoWhisper-large, wav2vec2-base-vietnamese-250h, and Qwen3-ASR-1.7B, evaluated zero-shot.
+- **Fine-tuning:** LoRA + speed perturbation + SpecAugment on PhoWhisper-large and Whisper large-v3.
+- **Best model:** [`rinhoooo/phowhisper-large-vien-cs-asr`](https://huggingface.co/rinhoooo/phowhisper-large-vien-cs-asr)
 
 ---
 
 ## Results
 
-### Ablation study (validation set)
+**Primary metric: WER-N** (WER after removing punctuation, lowercasing, and stripping language tags).
+
+### Model comparison and ablation (validation set)
 
 | Model | Condition | WER | WER-N | CER-N | SER-N |
 |---|---|---|---|---|---|
@@ -32,7 +32,7 @@ This repository contains the dataset, code, and model weights accompanying the p
 | wav2vec2-VI-250h | Baseline (zero-shot) | 64.68 | 51.30 | 28.10 | 100.00 |
 | Qwen3-ASR-1.7B | Baseline (zero-shot) | 23.83 | 14.43 | 7.74 | 62.88 |
 
-### Holdout evaluation — PhoWhisper-large + Aug + LoRA
+### Holdout evaluation: PhoWhisper-large + Aug + LoRA
 
 | Metric | Raw | Normalized |
 |---|---|---|
@@ -40,7 +40,7 @@ This repository contains the dataset, code, and model weights accompanying the p
 | CER | 2.76 | 2.44 |
 | SER | 37.26 | 31.48 |
 
-### Cross-domain: VIVOS monolingual Vietnamese
+### Cross-domain check: VIVOS (monolingual Vietnamese)
 
 | Model | Condition | WER-N |
 |---|---|---|
@@ -50,13 +50,11 @@ This repository contains the dataset, code, and model weights accompanying the p
 | PhoWhisper-large | Untuned | 4.61 |
 | PhoWhisper-large | Fine-tuned | 7.20 |
 
-Fine-tuning on code-switching data increases VIVOS WER-N by only 2.59pp — no catastrophic forgetting.
+Fine-tuning on code-switching data raises VIVOS WER-N by only 2.59 points, so there is no catastrophic forgetting.
 
 ---
 
 ## Dataset
-
-The corpus comprises **12,672 utterances / 12.2 hours** spanning 5 domains: classrooms, supermarkets, airports, offices, and casual conversation.
 
 | Split | Utterances | Duration |
 |---|---|---|
@@ -64,22 +62,19 @@ The corpus comprises **12,672 utterances / 12.2 hours** spanning 5 domains: clas
 | Dev | 1,048 | 1.0 h |
 | Test | 1,436 | 1.5 h |
 
-- 99.8% of utterances contain intra-sentential code-switching
 - English token ratio: 18.6% (train)
 - Vocabulary: 6,685 unique word types (4,599 EN / 1,858 VI)
 - Audio: 16 kHz, mono, `.wav`
 
-📦 **Dataset on HuggingFace Hub:** `[link coming soon]`
+📦 **Dataset on HuggingFace Hub:** coming soon
 
 ---
 
-## Models
-
-📦 **Fine-tuned model weights on HuggingFace Hub:** [rinhoooo/phowhisper-large-vien-cs-asr](https://huggingface.co/rinhoooo/phowhisper-large-vien-cs-asr)
+## Pretrained model
 
 | Model | HuggingFace ID |
 |---|---|
-| PhoWhisper-large + Aug + LoRA (best) | `rinhoooo/phowhisper-large-vien-cs-asr` |
+| PhoWhisper-large + Aug + LoRA (best) | [`rinhoooo/phowhisper-large-vien-cs-asr`](https://huggingface.co/rinhoooo/phowhisper-large-vien-cs-asr) |
 
 ---
 
@@ -106,7 +101,7 @@ vien-cs-asr/
 ├── requirements.txt
 ├── .gitignore
 ├── DATASHEET.md
-└── LICENSE                       # CC BY 4.0
+└── LICENSE
 ```
 
 ---
@@ -116,29 +111,44 @@ vien-cs-asr/
 Tested on Python 3.10, CUDA 12.1, single NVIDIA A100 80 GB.
 
 ```bash
-git clone https://github.com/[org]/vien-cs-asr.git
+git clone https://github.com/hung-dang-pham/vien-cs-asr.git
 cd vien-cs-asr
 ```
 
-Install PyTorch with the correct CUDA variant first:
+Install PyTorch with the right CUDA variant first:
 
 ```bash
 pip install torch==2.3.1 torchaudio==2.3.1 --index-url https://download.pytorch.org/whl/cu121
 ```
 
-Then install the remaining dependencies:
+Then the remaining dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-> **Note:** If you are running on a different CUDA version, replace `cu121` with the appropriate tag (e.g. `cu118` for CUDA 11.8). See [pytorch.org/get-started](https://pytorch.org/get-started/locally/) for the full matrix.
+> **Note:** On a different CUDA version, replace `cu121` with the matching tag (e.g. `cu118` for CUDA 11.8). See [pytorch.org/get-started](https://pytorch.org/get-started/locally/) for the full matrix.
 
 ---
 
-## Training
+## Usage
 
-Open `notebooks/02_train.ipynb` and set paths in the first cell:
+### Run the pretrained model
+
+```python
+from transformers import pipeline
+
+asr = pipeline(
+    "automatic-speech-recognition",
+    model="rinhoooo/phowhisper-large-vien-cs-asr",
+    device=0,
+)
+print(asr("path/to/audio.wav")["text"])
+```
+
+### Train
+
+Open `notebooks/02_train.ipynb` and set the paths in the first cell:
 
 ```python
 DATA_DIR   = "data/manifests"
@@ -163,41 +173,19 @@ Key hyperparameters (see `configs/train.yaml` and `configs/lora.yaml`):
 | LoRA target modules | q_proj, k_proj, v_proj, out_proj, fc1, fc2 |
 | Trainable params | 57.7M (3.6% of total) |
 
----
+### Evaluate
 
-## Evaluation
-
-```bash
-# Run full evaluation on test split
-# (see notebooks/03_eval.ipynb for detailed breakdown)
-```
-
-Metrics reported: WER, CER, SER on both raw and normalized transcriptions.  
-**Primary metric: WER-N** (punctuation removed, lowercased, language tags stripped).
-
----
-
-## Citation
-
-```bibtex
-@inproceedings{[author]2026viencsasr,
-  title     = {A Vietnamese-English Code-Switching Speech Dataset and Benchmark
-               Evaluation for Automatic Speech Recognition},
-  author    = {[Author] and [Author] and [Author]},
-  booktitle = {Procedia Computer Science (KES 2026)},
-  year      = {2026}
-}
-```
+Open `notebooks/03_eval.ipynb` for the full WER / CER / SER breakdown on raw and normalized transcriptions.
 
 ---
 
 ## License
 
-- **Code:** MIT License  
+- **Code:** MIT License
 - **Dataset:** Creative Commons Attribution 4.0 International (CC BY 4.0)
 
 ---
 
 ## Acknowledgements
 
-[Acknowledgements here.]
+Built on top of [Whisper](https://github.com/openai/whisper), [PhoWhisper](https://github.com/VinAIResearch/PhoWhisper), [PEFT](https://github.com/huggingface/peft), and [Hugging Face Transformers](https://github.com/huggingface/transformers).
